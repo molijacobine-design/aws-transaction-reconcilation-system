@@ -1,4 +1,4 @@
-![image alt]()
+![image alt](https://github.com/molijacobine-design/aws-transaction-reconcilation-system/blob/4249383189d27e9480a1f3724d8654fc042929aa/AWS-Transaction-Reconsiliaton-System/Architecture%20Diagram.png)
 
 # AWS Transaction Reconciliation System
 
