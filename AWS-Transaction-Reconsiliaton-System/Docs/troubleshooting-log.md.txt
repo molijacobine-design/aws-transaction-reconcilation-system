@@ -1,0 +1,169 @@
+# Troubleshooting Log
+
+This document records issues encountered while building the AWS Transaction Reconciliation System and how they were resolved.
+
+---
+
+## Issue 1: KeyError 'Records'
+
+### Error
+
+```text
+KeyError: 'Records'
+```
+
+### Cause
+
+The Lambda function expected an S3 event payload:
+
+```python
+event['Records'][0]['s3']
+```
+
+but the Lambda was tested using a default test event that did not contain a Records field.
+
+### Resolution
+
+Created a valid S3 test event or tested by uploading files directly into the S3 bucket.
+
+### Lesson Learned
+
+AWS Lambda event structures vary depending on the trigger source. Always inspect the incoming event before processing it.
+
+---
+
+## Issue 2: NameError 'transaction' is not defined
+
+### Error
+
+```text
+NameError: name 'transaction' is not defined
+```
+
+### Cause
+
+Bucket name was written without quotation marks:
+
+```python
+Bucket=transaction-reconciliation-temi
+```
+
+Python interpreted the value as variables instead of a string.
+
+### Resolution
+
+Updated code to:
+
+```python
+Bucket="transaction-reconciliation-temi"
+```
+
+or
+
+```python
+Bucket=BUCKET_NAME
+```
+
+### Lesson Learned
+
+AWS resource names must be passed as strings.
+
+---
+
+## Issue 3: SNS Publish Authorization Error
+
+### Error
+
+```text
+AuthorizationErrorException:
+User is not authorized to perform SNS:Publish
+```
+
+### Cause
+
+Lambda execution role did not have permission to publish messages to SNS.
+
+### Resolution
+
+Attached SNS publish permissions to the Lambda IAM role.
+
+Example policy:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "sns:Publish",
+  "Resource": "*"
+}
+```
+
+### Lesson Learned
+
+AWS services require explicit IAM permissions even when resources exist in the same account.
+
+---
+
+## Issue 4: Hardcoded Bucket Testing
+
+### Challenge
+
+The original design expected S3 event notifications.
+
+During initial testing, it was easier to hardcode:
+
+```python
+BUCKET_NAME
+FILE_NAME
+```
+
+### Resolution
+
+Used hardcoded values during debugging and later planned to transition back to event-driven processing.
+
+### Lesson Learned
+
+When debugging, simplify the architecture first and then reintroduce automation.
+
+---
+
+## Issue 5: Environment Variable Configuration
+
+### Potential Error
+
+```text
+KeyError: SNS_TOPIC_ARN
+```
+
+### Cause
+
+SNS topic ARN environment variable was not configured.
+
+### Resolution
+
+Added:
+
+SNS_TOPIC_ARN
+
+to Lambda environment variables.
+
+### Lesson Learned
+
+Sensitive configuration should be stored in environment variables rather than hardcoded in code.
+
+---
+
+# Overall Learning
+
+Through this project I gained practical experience with:
+
+- Amazon S3
+- AWS Lambda
+- Amazon SNS
+- Amazon CloudWatch
+- AWS IAM
+- Serverless Architecture
+- Event-Driven Design
+- AWS Troubleshooting
+- Cloud Debugging Practices
+
+The project demonstrated the importance of IAM permissions, event payload validation, logging, and incremental debugging when building cloud-native applications.

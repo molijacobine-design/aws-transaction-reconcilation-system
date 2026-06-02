@@ -1,0 +1,73 @@
+import json
+import csv
+import boto3
+import os
+
+s3 = boto3.client('s3')
+sns = boto3.client('sns')
+
+TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
+
+BUCKET_NAME = "transaction-reconciliation-jacobine"
+FILE_NAME = "transactions.csv"
+
+
+def lambda_handler(event, context):
+
+    try:
+
+        response = s3.get_object(
+            Bucket=BUCKET_NAME,
+            Key=FILE_NAME
+        )
+
+        file_content = response['Body'].read().decode('utf-8')
+
+        total_records = 0
+        valid_records = 0
+        invalid_records = 0
+
+        reader = csv.DictReader(file_content.splitlines())
+
+        for row in reader:
+
+            total_records += 1
+
+            try:
+                amount = float(row['amount'])
+
+                if amount < 0:
+                    invalid_records += 1
+                else:
+                    valid_records += 1
+
+            except Exception:
+                invalid_records += 1
+
+        message = f"""
+Transaction Reconciliation Report
+
+File: {FILE_NAME}
+
+Total Records: {total_records}
+Valid Records: {valid_records}
+Invalid Records: {invalid_records}
+"""
+
+        print(message)
+
+        sns.publish(
+            TopicArn=TOPIC_ARN,
+            Subject='Transaction Reconciliation Report',
+            Message=message
+        )
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps(message)
+        }
+
+    except Exception as e:
+
+        print(str(e))
+        raise

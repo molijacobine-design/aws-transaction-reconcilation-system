@@ -1,0 +1,18 @@
+# Project Overview
+
+## Business Problem
+
+Financial institutions receive transaction files daily.
+
+Manual reconciliation is time-consuming and prone to human error.
+
+## Solution
+
+An event-driven AWS serverless application automatically validates transaction files and notifies operations teams.
+
+## Benefits
+
+- Reduced manual effort
+- Faster reconciliation
+- Improved visibility
+- Automated notifications

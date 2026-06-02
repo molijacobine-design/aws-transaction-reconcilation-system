@@ -1,0 +1,45 @@
+# Deployment Guide
+
+## Step 1
+
+Create SNS Topic
+
+Name:
+
+transaction-alerts
+
+## Step 2
+
+Create S3 Bucket
+
+Name:
+
+transaction-reconciliation-temi
+
+## Step 3
+
+Create Lambda Function
+
+Runtime:
+
+Python 3.13
+
+## Step 4
+
+Configure Environment Variable
+
+SNS_TOPIC_ARN
+
+## Step 5
+
+Upload transactions.csv
+
+## Step 6
+
+Test Lambda
+
+Verify SNS Email Notification
+
+## Step 7
+
+Review CloudWatch Logs

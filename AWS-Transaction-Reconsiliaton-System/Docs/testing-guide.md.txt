@@ -1,0 +1,25 @@
+# Testing Guide
+
+## Positive Test
+
+Upload valid transactions.csv
+
+Expected:
+
+- Lambda succeeds
+- SNS email sent
+
+## Negative Test
+
+Upload file containing negative amounts
+
+Expected:
+
+- Invalid records counted
+- Report generated
+
+## Monitoring
+
+Review logs in CloudWatch
+
+/aws/lambda/transaction-validator
